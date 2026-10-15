@@ -42,7 +42,7 @@ const uint8_t num_ytFrames = 6;
 
 // Total time each scene runs (ms) - frames are spread over this time
 #define COUNTDOWN_MS  5000UL
-#define GOODBYE_MS    5000UL
+#define GOODBYE_MS    2000UL
 #define YOUTHOUGHT_MS 3000UL
 
 void playFrames(const uint8_t* const* table, byte count, unsigned long totalMs) {
