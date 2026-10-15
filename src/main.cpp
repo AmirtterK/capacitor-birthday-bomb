@@ -1,15 +1,14 @@
 /*
   Happy Birthday OLED (from happy_birth_day_oled_V2) - Arduino UNO + OLED only
 
-  Uses the frame data from the zip (hpbd.h, Capacitor.h, you_thought.h).
+  Uses the frame data from the zip (Capacitor.h, you_thought.h).
   The full animations are ~320 KB and an Uno has 32 KB of flash, so only an
   evenly-spaced subset of frames is kept. Everything else (button, buzzer,
-  LEDs, NeoPixel) is removed - it plays automatically and loops.
+  LEDs, NeoPixel) is removed - it plays automatically and loops: countdown -> goodbye capacitor -> you thought -> repeat.
 
   Wiring: OLED GND->GND, VCC->5V, SCL->A5, SDA->A4
   Libraries: Adafruit GFX, Adafruit SH110X
-  Put this file in the same folder as hpbd.h, Capacitor.h, you_thought.h
-  and the small pgmspace.h shim that comes with it.
+  Put this file in the same folder as Capacitor.h and you_thought.h.
 */
 
 #include <Arduino.h>
@@ -17,7 +16,6 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH110X.h>
 
-#include "hpbd.h"
 #include "Capacitor.h"
 #include "you_thought.h"
 
@@ -29,26 +27,23 @@
 Adafruit_SH1106G display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 // Frame subsets (only these are linked into flash)
-const uint8_t* const bdayFrames[] PROGMEM = {
-  frame0, frame17, frame35, frame52,
-  frame70, frame87, frame105
-};
-const uint8_t num_bdayFrames = 7;
 const uint8_t* const capFrames[] PROGMEM = {
-  frameCap0, frameCap24, frameCap49, frameCap74
+  frameCap0, frameCap11, frameCap22, frameCap33,
+  frameCap44, frameCap54, frameCap65, frameCap76,
+  frameCap87
 };
-const uint8_t num_capFrames = 4;
+const uint8_t num_capFrames = 9;
 const uint8_t* const ytFrames[] PROGMEM = {
-  frameYT0, frameYT25, frameYT50, frameYT74
+  frameYT0, frameYT16, frameYT33, frameYT50,
+  frameYT66, frameYT82
 };
-const uint8_t num_ytFrames = 4;
+const uint8_t num_ytFrames = 6;
 
 
 // Total time each scene runs (ms) - frames are spread over this time
 #define COUNTDOWN_MS  5000UL
 #define GOODBYE_MS    5000UL
 #define YOUTHOUGHT_MS 3000UL
-#define BIRTHDAY_MS   10000UL
 
 void playFrames(const uint8_t* const* table, byte count, unsigned long totalMs) {
   unsigned long start = millis();
@@ -99,8 +94,4 @@ void loop() {
   countdownScene();
   playFrames(capFrames, num_capFrames, GOODBYE_MS);
   playFrames(ytFrames, num_ytFrames, YOUTHOUGHT_MS);
-  playFrames(bdayFrames, num_bdayFrames, BIRTHDAY_MS);
-  display.clearDisplay();
-  display.display();
-  delay(2000);
 }
